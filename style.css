@@ -116,10 +116,12 @@ a:hover {
     position: absolute;
     inset: 58px 42px auto;
     min-height: 220px;
+    max-width: calc(100% - 84px);
     border: 2px solid var(--ink);
     border-radius: 8px;
     background: rgba(255, 253, 248, 0.88);
     box-shadow: 10px 10px 0 rgba(23, 32, 25, 0.18);
+    overflow: hidden;
 }
 
 .window::before {
@@ -137,8 +139,10 @@ code {
     display: block;
     padding: 28px;
     color: #273129;
-    font: 700 1.2rem/1.7 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    font: 700 clamp(0.86rem, 2.4vw, 1.2rem)/1.7 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .signature {
@@ -170,5 +174,6 @@ code {
 
     .window {
         inset: 36px 24px auto;
+        max-width: calc(100% - 48px);
     }
 }
