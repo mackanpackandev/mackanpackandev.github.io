@@ -331,7 +331,7 @@ function initSpotifyPlayer() {
     spotifyPlayer = new Spotify.Player({
         name: "Music Quiz",
         getOAuthToken: (cb) => cb(accessToken),
-        volume: 0.7
+        volume: 0.3
     });
 
     spotifyPlayer.addListener("ready", ({ device_id }) => {
@@ -531,8 +531,15 @@ artistSearchInput.addEventListener("keydown", (event) => {
     }
 });
 playPauseBtn.addEventListener("click", togglePlayPause);
+let volumeDebounceTimer = null;
 volumeControl.addEventListener("input", () => {
-    if (spotifyPlayer) spotifyPlayer.setVolume(Number(volumeControl.value));
+    clearTimeout(volumeDebounceTimer);
+    volumeDebounceTimer = setTimeout(async () => {
+        const volumePercent = Math.round(Number(volumeControl.value) * 100);
+        try {
+            await spotifyFetch(`/me/player/volume?volume_percent=${volumePercent}`, { method: "PUT" });
+        } catch { /* ignore */ }
+    }, 100);
 });
 nextRoundButton.addEventListener("click", nextRound);
 restartQuizButton.addEventListener("click", restartQuiz);
