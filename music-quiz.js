@@ -20,6 +20,7 @@ const quizTitle = document.querySelector("#quiz-stage-title");
 const scoreDisplay = document.querySelector("#quiz-score");
 const audioPanel = document.querySelector("#audio-panel");
 const playPauseBtn = document.querySelector("#play-pause-btn");
+const volumeControl = document.querySelector("#volume-control");
 const answerGrid = document.querySelector("#answer-grid");
 const nextRoundButton = document.querySelector("#next-round");
 const restartQuizButton = document.querySelector("#restart-quiz");
@@ -530,6 +531,9 @@ artistSearchInput.addEventListener("keydown", (event) => {
     }
 });
 playPauseBtn.addEventListener("click", togglePlayPause);
+volumeControl.addEventListener("input", () => {
+    if (spotifyPlayer) spotifyPlayer.setVolume(Number(volumeControl.value));
+});
 nextRoundButton.addEventListener("click", nextRound);
 restartQuizButton.addEventListener("click", restartQuiz);
 
