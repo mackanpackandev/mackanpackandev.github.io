@@ -19,7 +19,7 @@ const roundLabel = document.querySelector("#round-label");
 const quizTitle = document.querySelector("#quiz-stage-title");
 const scoreDisplay = document.querySelector("#quiz-score");
 const audioPanel = document.querySelector("#audio-panel");
-const songPreview = document.querySelector("#song-preview");
+const playPauseBtn = document.querySelector("#play-pause-btn");
 const answerGrid = document.querySelector("#answer-grid");
 const nextRoundButton = document.querySelector("#next-round");
 const restartQuizButton = document.querySelector("#restart-quiz");
@@ -33,6 +33,10 @@ let quizRounds = [];
 let currentRoundIndex = 0;
 let score = 0;
 let answeredCurrentRound = false;
+let spotifyPlayer = null;
+let spotifyDeviceId = null;
+let isPlaying = false;
+let sdkReady = false;
 
 function setAuthStatus(message) {
     authStatus.textContent = message;
@@ -57,6 +61,8 @@ function loadStoredToken() {
     accessToken = storedToken.accessToken;
     tokenExpiresAt = storedToken.expiresAt;
     setAuthStatus("Spotify connected.");
+
+    if (sdkReady) initSpotifyPlayer();
 }
 
 function saveToken(tokenResponse) {
@@ -67,6 +73,8 @@ function saveToken(tokenResponse) {
         accessToken,
         expiresAt: tokenExpiresAt
     }));
+
+    if (sdkReady) initSpotifyPlayer();
 }
 
 function getRandomString(length) {
@@ -107,6 +115,7 @@ async function connectSpotify() {
         client_id: clientId,
         response_type: "code",
         redirect_uri: getRedirectUri(),
+        scope: "streaming user-read-email user-read-private",
         code_challenge_method: "S256",
         code_challenge: codeChallenge
     });
@@ -163,21 +172,27 @@ async function handleSpotifyRedirect() {
     setAuthStatus("Spotify connected.");
 }
 
-async function spotifyFetch(path) {
+async function spotifyFetch(path, options = {}) {
     if (!accessToken || Date.now() >= tokenExpiresAt) {
         throw new Error("Connect Spotify before searching.");
     }
 
+    const headers = { Authorization: `Bearer ${accessToken}` };
+
+    if (options.body) {
+        headers["Content-Type"] = "application/json";
+    }
+
     const response = await fetch(`${spotifyApiUrl}${path}`, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
+        ...options,
+        headers
     });
 
     if (!response.ok) {
         throw new Error("Spotify request failed. Try reconnecting.");
     }
 
+    if (response.status === 204) return null;
     return response.json();
 }
 
@@ -288,7 +303,7 @@ async function getAlbumTracks(album) {
         name: track.name,
         albumName: data.name,
         albumImage,
-        previewUrl: track.preview_url,
+        duration_ms: track.duration_ms,
         spotifyUrl: track.external_urls?.spotify || data.external_urls?.spotify || "",
         artists: track.artists.map((artist) => artist.name).join(", ")
     }));
@@ -309,10 +324,68 @@ function dedupeTracks(tracks) {
     });
 }
 
+function initSpotifyPlayer() {
+    if (spotifyPlayer || !accessToken) return;
+
+    spotifyPlayer = new Spotify.Player({
+        name: "Music Quiz",
+        getOAuthToken: (cb) => cb(accessToken),
+        volume: 0.7
+    });
+
+    spotifyPlayer.addListener("ready", ({ device_id }) => {
+        spotifyDeviceId = device_id;
+    });
+
+    spotifyPlayer.addListener("player_state_changed", (state) => {
+        if (!state) return;
+        isPlaying = !state.paused;
+        playPauseBtn.textContent = isPlaying ? "Pause" : "Play";
+    });
+
+    spotifyPlayer.addListener("authentication_error", () => {
+        setAuthStatus("Playback auth failed. Reconnect Spotify to get the required permissions.");
+    });
+
+    spotifyPlayer.addListener("account_error", () => {
+        setAuthStatus("Spotify Premium is required for full track playback.");
+    });
+
+    spotifyPlayer.connect();
+}
+
+async function playTrackAtRandom(track) {
+    if (!spotifyDeviceId) {
+        setQuizStatus("Spotify player not ready yet. Try again in a moment.");
+        return;
+    }
+
+    // Start between 20% and 60% into the track to land on a recognisable section
+    const startMs = Math.floor(track.duration_ms * (0.2 + Math.random() * 0.4));
+
+    await spotifyFetch(`/me/player/play?device_id=${encodeURIComponent(spotifyDeviceId)}`, {
+        method: "PUT",
+        body: JSON.stringify({
+            uris: [`spotify:track:${track.id}`],
+            position_ms: startMs
+        })
+    });
+}
+
+async function togglePlayPause() {
+    if (!spotifyPlayer) return;
+
+    if (isPlaying) {
+        await spotifyPlayer.pause();
+    } else {
+        await spotifyPlayer.resume();
+    }
+}
+
 async function prepareQuiz(artist) {
     selectedArtist = artist;
     quizTitle.textContent = `Loading ${artist.name}...`;
-    setQuizStatus("Loading albums and preview clips...");
+    setQuizStatus("Loading albums and tracks...");
     answerGrid.innerHTML = "";
     audioPanel.hidden = true;
 
@@ -321,10 +394,10 @@ async function prepareQuiz(artist) {
         const trackGroups = await Promise.all(albums.map((album) => getAlbumTracks(album)));
         artistTracks = dedupeTracks(trackGroups.flat());
 
-        const playableTracks = artistTracks.filter((track) => track.previewUrl && track.albumImage);
+        const playableTracks = artistTracks.filter((track) => track.albumImage);
 
-        if (playableTracks.length < quizRoundCount || artistTracks.length < answerCount) {
-            setQuizStatus("Spotify did not return enough playable preview clips for this artist. Try another artist.");
+        if (playableTracks.length < quizRoundCount) {
+            setQuizStatus("This artist doesn't have enough songs in their catalog. Try another artist.");
             quizTitle.textContent = "Choose another artist";
             return;
         }
@@ -352,7 +425,7 @@ function buildAnswers(correctTrack) {
     return shuffle([correctTrack, ...decoys]);
 }
 
-function renderRound() {
+async function renderRound() {
     const round = quizRounds[currentRoundIndex];
     answeredCurrentRound = false;
     nextRoundButton.hidden = true;
@@ -361,8 +434,8 @@ function renderRound() {
 
     roundLabel.textContent = `Round ${currentRoundIndex + 1} of ${quizRoundCount}`;
     quizTitle.textContent = selectedArtist ? `Which ${selectedArtist.name} song is this?` : "Guess the song";
-    songPreview.src = round.track.previewUrl;
     audioPanel.hidden = false;
+    playPauseBtn.textContent = "Pause";
 
     round.answers.forEach((answer) => {
         const button = document.createElement("button");
@@ -382,9 +455,11 @@ function renderRound() {
         answerGrid.appendChild(button);
     });
 
-    songPreview.play().catch(() => {
-        setQuizStatus("Press play to hear the preview.");
-    });
+    try {
+        await playTrackAtRandom(round.track);
+    } catch {
+        setQuizStatus("Could not start playback. Make sure Spotify is open and active on this device.");
+    }
 }
 
 function answerRound(selectedButton, selectedAnswer) {
@@ -411,7 +486,8 @@ function answerRound(selectedButton, selectedAnswer) {
     });
 
     selectedButton.classList.toggle("is-wrong", !isCorrect);
-    songPreview.pause();
+
+    if (spotifyPlayer) spotifyPlayer.pause();
 
     if (currentRoundIndex < quizRoundCount - 1) {
         nextRoundButton.hidden = false;
@@ -441,6 +517,11 @@ function initialize() {
     handleSpotifyRedirect();
 }
 
+window.onSpotifyWebPlaybackSDKReady = () => {
+    sdkReady = true;
+    if (accessToken) initSpotifyPlayer();
+};
+
 connectButton.addEventListener("click", connectSpotify);
 artistSearchButton.addEventListener("click", searchArtists);
 artistSearchInput.addEventListener("keydown", (event) => {
@@ -448,6 +529,7 @@ artistSearchInput.addEventListener("keydown", (event) => {
         searchArtists();
     }
 });
+playPauseBtn.addEventListener("click", togglePlayPause);
 nextRoundButton.addEventListener("click", nextRound);
 restartQuizButton.addEventListener("click", restartQuiz);
 
