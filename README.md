@@ -23,7 +23,9 @@ Example:
 .
 |-- index.html    # Main page markup
 |-- projects.html # Placeholder projects page
+|-- trivia.html   # Playable trivia game page
 |-- style.css     # Page styling
+|-- trivia.js     # Jeopardy-style trivia game logic and questions
 `-- README.md     # Project documentation
 ```
 
@@ -64,6 +66,18 @@ Common things to change:
 - Spacing
 - Button styles
 - Responsive layout rules
+
+Update the trivia game in `trivia.js`.
+
+Common things to change:
+
+- Category names
+- Question text
+- Answer text
+- Point values
+- Number of questions per category
+- English and Swedish translations in the `en` and `sv` fields
+- Team setup behavior, scoring, and randomized turn order
 
 ## Deployment
 

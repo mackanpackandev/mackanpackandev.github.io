@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Quiz | MACKAN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="projects-page">
+        <section class="projects-shell" aria-label="Music quiz">
+            <div class="projects-header">
+                <p class="eyebrow">MUSIC QUIZ</p>
+                <h1>Music Quiz.</h1>
+                <p>Connect Spotify, pick an artist, and guess five songs from their discography.</p>
+                <div class="actions">
+                    <a href="projects.html">Projects</a>
+                    <a href="index.html">Home</a>
+                </div>
+            </div>
+
+            <section class="music-quiz" aria-labelledby="music-quiz-title">
+                <div class="music-quiz-topbar">
+                    <div>
+                        <p class="project-kicker">Spotify-powered prototype</p>
+                        <h2 id="music-quiz-title">Guess the song</h2>
+                        <p>Each round plays a Spotify preview clip. Pick the matching song title and album art.</p>
+                    </div>
+                    <p class="spotify-note">Requires your own Spotify Developer app Client ID.</p>
+                </div>
+
+                <section class="spotify-setup" aria-labelledby="spotify-setup-title">
+                    <div>
+                        <h3 id="spotify-setup-title">Spotify setup</h3>
+                        <p>Use Authorization Code with PKCE. Add this page URL as a redirect URI in your Spotify app settings.</p>
+                    </div>
+
+                    <div class="spotify-form">
+                        <label for="spotify-client-id">
+                            <span>Client ID</span>
+                            <input id="spotify-client-id" type="text" autocomplete="off" placeholder="Paste your Spotify Client ID">
+                        </label>
+
+                        <label for="spotify-redirect-uri">
+                            <span>Redirect URI</span>
+                            <input id="spotify-redirect-uri" type="text" readonly>
+                        </label>
+
+                        <button type="button" id="spotify-connect">Connect Spotify</button>
+                    </div>
+
+                    <p class="quiz-status" id="auth-status" aria-live="polite"></p>
+                </section>
+
+                <section class="artist-picker" aria-labelledby="artist-picker-title">
+                    <div>
+                        <h3 id="artist-picker-title">Artist</h3>
+                        <p>Search for an artist, choose the right result, then start a five-round quiz.</p>
+                    </div>
+
+                    <div class="artist-search">
+                        <label for="artist-search-input">
+                            <span>Artist name</span>
+                            <input id="artist-search-input" type="search" placeholder="Taylor Swift, Daft Punk, ABBA">
+                        </label>
+
+                        <label for="spotify-market">
+                            <span>Market</span>
+                            <input id="spotify-market" type="text" maxlength="2" value="SE">
+                        </label>
+
+                        <button type="button" id="artist-search-button">Search</button>
+                    </div>
+
+                    <div class="artist-results" id="artist-results" aria-live="polite"></div>
+                </section>
+
+                <section class="quiz-stage" aria-labelledby="quiz-stage-title">
+                    <div class="quiz-stage-header">
+                        <div>
+                            <p class="project-kicker" id="round-label">Round 0 of 5</p>
+                            <h3 id="quiz-stage-title">Choose an artist to start</h3>
+                        </div>
+
+                        <div class="quiz-score">
+                            <span>Score</span>
+                            <strong id="quiz-score">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="audio-panel" id="audio-panel" hidden>
+                        <audio id="song-preview" controls></audio>
+                    </div>
+
+                    <div class="answer-grid" id="answer-grid"></div>
+
+                    <div class="quiz-actions">
+                        <button type="button" id="next-round" hidden>Next round</button>
+                        <button type="button" id="restart-quiz" hidden>Restart quiz</button>
+                    </div>
+
+                    <p class="quiz-status" id="quiz-status" aria-live="polite"></p>
+                </section>
+
+                <p class="spotify-attribution">
+                    Metadata and artwork from <a href="https://open.spotify.com" target="_blank" rel="noreferrer">Spotify</a>.
+                </p>
+            </section>
+        </section>
+    </main>
+    <script src="music-quiz.js"></script>
+</body>
+</html>

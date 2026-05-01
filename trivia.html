@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Board | MACKAN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="projects-page">
+        <section class="projects-shell" aria-label="Trivia game">
+            <div class="projects-header">
+                <p class="eyebrow" data-i18n="pageEyebrow">TRIVIA GAME</p>
+                <h1 data-i18n="pageTitle">Trivia Board.</h1>
+                <p data-i18n="pageIntro">Pick a category and point value. Harder questions are worth more points.</p>
+                <div class="actions">
+                    <a href="projects.html" data-i18n="projectsLink">Projects</a>
+                    <a href="index.html" data-i18n="homeLink">Home</a>
+                </div>
+            </div>
+
+            <section class="trivia-game" aria-labelledby="trivia-title">
+                <div class="trivia-topbar">
+                    <div>
+                        <p class="project-kicker" data-i18n="prototypeLabel">Playable prototype</p>
+                        <h2 id="trivia-title" data-i18n="gameTitle">Music, Games, Tech, Harry Potter, and Star Wars</h2>
+                        <p data-i18n="gameIntro">Use this as a starting point for more categories, questions, and game modes.</p>
+                    </div>
+
+                    <div class="trivia-controls">
+                        <label class="pack-picker" for="trivia-pack">
+                            <span data-i18n="gamePackLabel">Question pack</span>
+                            <select id="trivia-pack"></select>
+                        </label>
+
+                        <div class="language-toggle" aria-label="Language">
+                            <button type="button" class="language-button is-active" data-language="en">EN</button>
+                            <button type="button" class="language-button" data-language="sv">SV</button>
+                        </div>
+                    </div>
+                </div>
+
+                <section class="team-manager" aria-labelledby="teams-title">
+                    <div class="team-manager-header">
+                        <div>
+                            <p class="project-kicker" data-i18n="teamsLabel">Teams</p>
+                            <h3 id="teams-title" data-i18n="teamsTitle">Team setup</h3>
+                            <p data-i18n="teamsIntro">Edit the team names, randomize the order, and track each team's score.</p>
+                        </div>
+
+                        <div class="team-actions">
+                            <button type="button" id="add-team" data-i18n="addTeam">Add team</button>
+                            <button type="button" id="randomize-teams" data-i18n="randomizeTeams">Randomize order</button>
+                            <button type="button" id="reset-scores" data-i18n="resetScores">Reset scores</button>
+                        </div>
+                    </div>
+
+                    <div class="current-turn" aria-live="polite">
+                        <span data-i18n="currentTurn">Current turn</span>
+                        <strong id="current-team-name">Team 1</strong>
+                    </div>
+
+                    <details class="player-randomizer">
+                        <summary>
+                            <h4 id="player-randomizer-title" data-i18n="playerRandomizerTitle">Random teams from players</h4>
+                        </summary>
+
+                        <p data-i18n="playerRandomizerIntro">Add player names, choose the number of teams, then randomize them into even groups.</p>
+
+                        <label for="player-list">
+                            <span data-i18n="playerListLabel">Players</span>
+                            <textarea id="player-list" rows="5" data-i18n-placeholder="playerListPlaceholder" placeholder="One player per line, or separate names with commas"></textarea>
+                        </label>
+
+                        <div class="randomizer-controls">
+                            <label for="generated-team-count">
+                                <span data-i18n="teamCountLabel">Number of teams</span>
+                                <input id="generated-team-count" type="number" min="2" max="12" value="4">
+                            </label>
+
+                            <button type="button" id="generate-teams" data-i18n="generateTeams">Randomize teams</button>
+                        </div>
+
+                        <p class="randomizer-status" id="randomizer-status" aria-live="polite"></p>
+                    </details>
+
+                    <div class="team-list" id="team-list" aria-label="Teams"></div>
+                </section>
+
+                <details class="pack-editor">
+                    <summary>
+                        <h3 data-i18n="packEditorTitle">Custom packs</h3>
+                    </summary>
+
+                    <p data-i18n="packEditorIntro">Create your own question pack. Custom packs are saved in this browser and stay after refresh.</p>
+
+                    <div class="custom-pack-tools">
+                        <label for="custom-pack-edit-select">
+                            <span data-i18n="editCustomPackLabel">Edit saved pack</span>
+                            <select id="custom-pack-edit-select"></select>
+                        </label>
+
+                        <button type="button" id="new-custom-pack" data-i18n="newCustomPack">New pack</button>
+                    </div>
+
+                    <label for="custom-pack-name">
+                        <span data-i18n="customPackNameLabel">Pack name</span>
+                        <input id="custom-pack-name" type="text" data-i18n-placeholder="customPackNamePlaceholder" placeholder="Movie night, school quiz, birthday party">
+                    </label>
+
+                    <div class="custom-category-list" id="custom-category-list"></div>
+
+                    <div class="pack-editor-actions">
+                        <button type="button" id="add-custom-category" data-i18n="addCustomCategory">Add category</button>
+                        <button type="button" id="save-custom-pack" data-i18n="saveCustomPack">Save custom pack</button>
+                    </div>
+
+                    <p class="pack-editor-status" id="pack-editor-status" aria-live="polite"></p>
+                </details>
+
+                <div class="trivia-board" id="trivia-board" aria-label="Jeopardy-style trivia board"></div>
+
+                <div class="question-panel" id="question-panel" hidden>
+                    <div>
+                        <p class="project-kicker" id="question-meta">Category</p>
+                        <h3 id="question-text">Question text</h3>
+                        <p class="answer-text" id="answer-text" hidden>Answer text</p>
+                    </div>
+
+                    <div class="question-actions">
+                        <button type="button" id="show-answer" data-i18n="showAnswer">Show answer</button>
+                        <button type="button" id="mark-correct" data-i18n="correct">Correct</button>
+                        <button type="button" id="mark-wrong" data-i18n="wrong">Wrong</button>
+                    </div>
+                </div>
+
+                <button type="button" class="reset-button" id="reset-game" data-i18n="resetBoard">Reset board</button>
+            </section>
+        </section>
+    </main>
+    <script src="trivia.js"></script>
+</body>
+</html>
