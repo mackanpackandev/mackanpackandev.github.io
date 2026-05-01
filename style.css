@@ -35,7 +35,7 @@ main {
 .panel {
     width: min(100%, 920px);
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 1fr 1fr;
     gap: 48px;
     align-items: center;
 }
@@ -61,7 +61,7 @@ main {
 
 h1 {
     margin: 0;
-    font-size: clamp(3.25rem, 12vw, 8.5rem);
+    font-size: clamp(2.75rem, 8vw, 5.5rem);
     line-height: 0.9;
     letter-spacing: 0;
 }

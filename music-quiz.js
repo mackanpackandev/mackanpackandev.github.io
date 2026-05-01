@@ -331,7 +331,7 @@ function initSpotifyPlayer() {
     spotifyPlayer = new Spotify.Player({
         name: "Music Quiz",
         getOAuthToken: (cb) => cb(accessToken),
-        volume: 0.3
+        volume: 0.35
     });
 
     spotifyPlayer.addListener("ready", ({ device_id }) => {
@@ -537,7 +537,8 @@ volumeControl.addEventListener("input", () => {
     volumeDebounceTimer = setTimeout(async () => {
         const volumePercent = Math.round(Number(volumeControl.value) * 100);
         try {
-            await spotifyFetch(`/me/player/volume?volume_percent=${volumePercent}`, { method: "PUT" });
+            const deviceParam = spotifyDeviceId ? `&device_id=${encodeURIComponent(spotifyDeviceId)}` : "";
+            await spotifyFetch(`/me/player/volume?volume_percent=${volumePercent}${deviceParam}`, { method: "PUT" });
         } catch { /* ignore */ }
     }, 100);
 });
