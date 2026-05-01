@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World | MACKAN</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #172019;
+            --muted: #536057;
+            --paper: #fffdf8;
+            --line: #d8ded5;
+            --mint: #c9eadb;
+            --coral: #f59b7a;
+            --gold: #f4c86a;
+            --blue: #6aa8d8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--ink);
+            background:
+                linear-gradient(135deg, rgba(201, 234, 219, 0.82), rgba(255, 253, 248, 0.88) 38%, rgba(245, 155, 122, 0.46)),
+                var(--paper);
+        }
+
+        main {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 32px;
+        }
+
+        .panel {
+            width: min(100%, 920px);
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .copy {
+            display: grid;
+            gap: 24px;
+        }
+
+        .eyebrow {
+            width: fit-content;
+            margin: 0;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.58);
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(3.25rem, 12vw, 8.5rem);
+            line-height: 0.9;
+            letter-spacing: 0;
+        }
+
+        p {
+            max-width: 58ch;
+            margin: 0;
+            color: var(--muted);
+            font-size: clamp(1.05rem, 2vw, 1.35rem);
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            min-height: 46px;
+            padding: 0 18px;
+            border: 1px solid var(--ink);
+            border-radius: 8px;
+            color: var(--ink);
+            text-decoration: none;
+            font-weight: 700;
+            background: #ffffff;
+            box-shadow: 0 5px 0 var(--ink);
+            transition: transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        a:hover {
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 var(--ink);
+        }
+
+        .scene {
+            position: relative;
+            min-height: 420px;
+            border: 1px solid rgba(23, 32, 25, 0.16);
+            border-radius: 8px;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 26% 28%, var(--gold) 0 11%, transparent 12%),
+                radial-gradient(circle at 76% 24%, var(--blue) 0 10%, transparent 11%),
+                linear-gradient(160deg, #ffffff 0 42%, var(--mint) 43% 68%, var(--coral) 69% 100%);
+            box-shadow: 18px 18px 0 rgba(23, 32, 25, 0.1);
+        }
+
+        .window {
+            position: absolute;
+            inset: 58px 42px auto;
+            min-height: 220px;
+            border: 2px solid var(--ink);
+            border-radius: 8px;
+            background: rgba(255, 253, 248, 0.88);
+            box-shadow: 10px 10px 0 rgba(23, 32, 25, 0.18);
+        }
+
+        .window::before {
+            content: "";
+            display: block;
+            height: 34px;
+            border-bottom: 2px solid var(--ink);
+            background:
+                radial-gradient(circle at 18px 17px, var(--coral) 0 5px, transparent 6px),
+                radial-gradient(circle at 38px 17px, var(--gold) 0 5px, transparent 6px),
+                radial-gradient(circle at 58px 17px, var(--mint) 0 5px, transparent 6px);
+        }
+
+        code {
+            display: block;
+            padding: 28px;
+            color: #273129;
+            font: 700 1.2rem/1.7 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+            white-space: pre-wrap;
+        }
+
+        .signature {
+            position: absolute;
+            right: 28px;
+            bottom: 24px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            color: var(--ink);
+            font-weight: 800;
+        }
+
+        @media (max-width: 760px) {
+            main {
+                align-items: start;
+                padding: 22px;
+            }
+
+            .panel {
+                grid-template-columns: 1fr;
+                gap: 32px;
+            }
+
+            .scene {
+                min-height: 320px;
+                box-shadow: 10px 10px 0 rgba(23, 32, 25, 0.1);
+            }
+
+            .window {
+                inset: 36px 24px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="panel" aria-label="Hello world welcome page">
+            <div class="copy">
+                <p class="eyebrow">MACKANPACKANDEV.GITHUB.IO</p>
+                <h1>Hello<br>world.</h1>
+                <p>A small, sharp starting point for the site. Clean enough to keep, bright enough to feel alive.</p>
+                <div class="actions">
+                    <a href="https://github.com/mackanpackandev">GitHub</a>
+                    <a href="https://github.com/mackanpackandev/mackanpackandev.github.io">View source</a>
+                </div>
+            </div>
+
+            <div class="scene" aria-hidden="true">
+                <div class="window">
+                    <code>const greeting = "Hello, world!";
+
+document.body.dataset.ready = true;</code>
+                </div>
+                <div class="signature">MACKAN</div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
