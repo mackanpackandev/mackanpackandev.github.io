@@ -22,6 +22,7 @@ Example:
 ```text
 .
 |-- index.html    # Main page markup
+|-- projects.html # Placeholder projects page
 |-- style.css     # Page styling
 `-- README.md     # Project documentation
 ```

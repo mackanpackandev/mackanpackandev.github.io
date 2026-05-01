@@ -73,6 +73,12 @@ p {
     line-height: 1.6;
 }
 
+h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    letter-spacing: 0;
+}
+
 .actions {
     display: flex;
     flex-wrap: wrap;
@@ -156,6 +162,56 @@ code {
     font-weight: 800;
 }
 
+.projects-page {
+    place-items: start center;
+}
+
+.projects-shell {
+    width: min(100%, 980px);
+    display: grid;
+    gap: 36px;
+}
+
+.projects-header {
+    display: grid;
+    gap: 22px;
+    padding-top: 24px;
+}
+
+.projects-header h1 {
+    max-width: 760px;
+    font-size: clamp(3rem, 9vw, 6.5rem);
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.project-card {
+    min-height: 220px;
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 22px;
+    border: 1px solid rgba(23, 32, 25, 0.16);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.68);
+    box-shadow: 8px 8px 0 rgba(23, 32, 25, 0.08);
+}
+
+.project-kicker {
+    width: fit-content;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--mint);
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
 @media (max-width: 760px) {
     main {
         align-items: start;
@@ -175,5 +231,13 @@ code {
     .window {
         inset: 36px 24px auto;
         max-width: calc(100% - 48px);
+    }
+
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .project-card {
+        min-height: 180px;
     }
 }
