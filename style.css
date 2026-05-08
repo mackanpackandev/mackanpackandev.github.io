@@ -11,6 +11,19 @@
     --lavender: #e7dcff;
 }
 
+[data-theme="dark"] {
+    color-scheme: dark;
+    --ink: #eef4ff;
+    --muted: #b8c3dc;
+    --paper: #111827;
+    --line: #34415f;
+    --pink: #9f4f72;
+    --blush: #c4799b;
+    --sky: #22506f;
+    --blue: #3978a5;
+    --lavender: #45356f;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -125,6 +138,17 @@ button:disabled {
     cursor: not-allowed;
     opacity: 0.44;
     box-shadow: none;
+}
+
+.theme-toggle {
+    position: fixed;
+    z-index: 20;
+    top: 18px;
+    right: 18px;
+    min-height: 40px;
+    padding: 0 14px;
+    border-color: var(--ink);
+    background: var(--paper);
 }
 
 .scene {
@@ -957,6 +981,106 @@ code {
 .reset-button {
     width: fit-content;
     background: var(--pink);
+}
+
+[data-theme="dark"] body {
+    background:
+        linear-gradient(135deg, rgba(17, 24, 39, 0.96), rgba(31, 42, 68, 0.94) 48%, rgba(64, 44, 78, 0.86)),
+        var(--paper);
+}
+
+[data-theme="dark"] a,
+[data-theme="dark"] button,
+[data-theme="dark"] .theme-toggle,
+[data-theme="dark"] .project-card a {
+    background: #182235;
+}
+
+[data-theme="dark"] .eyebrow,
+[data-theme="dark"] .window,
+[data-theme="dark"] .project-card,
+[data-theme="dark"] .projects-shell,
+[data-theme="dark"] .music-quiz,
+[data-theme="dark"] .music-quiz-topbar,
+[data-theme="dark"] .spotify-setup,
+[data-theme="dark"] .artist-picker,
+[data-theme="dark"] .quiz-stage,
+[data-theme="dark"] .trivia-game,
+[data-theme="dark"] .trivia-topbar,
+[data-theme="dark"] .team-manager,
+[data-theme="dark"] .player-randomizer,
+[data-theme="dark"] .team-card,
+[data-theme="dark"] .current-turn,
+[data-theme="dark"] .pack-editor,
+[data-theme="dark"] .custom-category-editor,
+[data-theme="dark"] .question-panel {
+    border-color: rgba(238, 244, 255, 0.18);
+    background: rgba(24, 34, 53, 0.78);
+}
+
+[data-theme="dark"] .scene {
+    border-color: rgba(238, 244, 255, 0.18);
+    background:
+        radial-gradient(circle at 26% 28%, rgba(159, 79, 114, 0.84) 0 11%, transparent 12%),
+        radial-gradient(circle at 76% 24%, rgba(57, 120, 165, 0.84) 0 10%, transparent 11%),
+        linear-gradient(160deg, #182235 0 42%, var(--sky) 43% 68%, #59395a 69% 100%);
+    box-shadow: 18px 18px 0 rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="dark"] .signature,
+[data-theme="dark"] .spotify-note,
+[data-theme="dark"] .quiz-score,
+[data-theme="dark"] .current-turn,
+[data-theme="dark"] .category-heading,
+[data-theme="dark"] .reset-button,
+[data-theme="dark"] .language-button.is-active {
+    background: var(--sky);
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .team-name,
+[data-theme="dark"] .answer-text {
+    border-color: var(--line);
+    color: var(--ink);
+    background: #0f172a;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: #8793ad;
+}
+
+[data-theme="dark"] code {
+    color: #e6edf7;
+}
+
+[data-theme="dark"] .artist-result,
+[data-theme="dark"] .song-answer,
+[data-theme="dark"] .language-button,
+[data-theme="dark"] .value-button,
+[data-theme="dark"] .score-button,
+[data-theme="dark"] .custom-question-row {
+    background: #182235;
+}
+
+[data-theme="dark"] .artist-result img,
+[data-theme="dark"] .song-answer img,
+[data-theme="dark"] .project-card::before {
+    background: var(--lavender);
+}
+
+[data-theme="dark"] .song-answer.is-correct {
+    background: #255a3a;
+}
+
+[data-theme="dark"] .song-answer.is-wrong {
+    background: #6f2d48;
+}
+
+[data-theme="dark"] .value-button.is-used {
+    background: #0f172a;
 }
 
 @media (max-width: 760px) {
