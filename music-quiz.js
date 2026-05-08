@@ -4,7 +4,8 @@ const spotifyApiUrl = "https://api.spotify.com/v1";
 const tokenStorageKey = "musicQuizSpotifyToken";
 const verifierStorageKey = "musicQuizCodeVerifier";
 const clientIdStorageKey = "musicQuizClientId";
-const quizRoundCount = 5;
+const defaultQuizRoundCount = 5;
+const maxQuizRoundCount = 20;
 const answerCount = 3;
 
 const clientIdInput = document.querySelector("#spotify-client-id");
@@ -13,6 +14,7 @@ const connectButton = document.querySelector("#spotify-connect");
 const authStatus = document.querySelector("#auth-status");
 const artistSearchInput = document.querySelector("#artist-search-input");
 const marketInput = document.querySelector("#spotify-market");
+const roundCountInput = document.querySelector("#round-count");
 const artistSearchButton = document.querySelector("#artist-search-button");
 const artistResults = document.querySelector("#artist-results");
 const roundLabel = document.querySelector("#round-label");
@@ -31,6 +33,7 @@ let tokenExpiresAt = 0;
 let selectedArtist = null;
 let artistTracks = [];
 let quizRounds = [];
+let currentQuizRoundCount = defaultQuizRoundCount;
 let currentRoundIndex = 0;
 let score = 0;
 let answeredCurrentRound = false;
@@ -199,6 +202,20 @@ async function spotifyFetch(path, options = {}) {
 
 function getMarket() {
     return (marketInput.value.trim() || "SE").toUpperCase();
+}
+
+function getSelectedRoundCount() {
+    const requestedCount = Number.parseInt(roundCountInput.value, 10);
+
+    if (Number.isNaN(requestedCount)) {
+        return defaultQuizRoundCount;
+    }
+
+    return Math.min(Math.max(requestedCount, 1), maxQuizRoundCount);
+}
+
+function normalizeRoundCountInput() {
+    roundCountInput.value = String(getSelectedRoundCount());
 }
 
 function getImage(images) {
@@ -389,6 +406,8 @@ async function prepareQuiz(artist) {
     setQuizStatus("Loading albums and tracks...");
     answerGrid.innerHTML = "";
     audioPanel.hidden = true;
+    normalizeRoundCountInput();
+    currentQuizRoundCount = getSelectedRoundCount();
 
     try {
         const albums = await getArtistAlbums(artist.id);
@@ -397,13 +416,13 @@ async function prepareQuiz(artist) {
 
         const playableTracks = artistTracks.filter((track) => track.albumImage);
 
-        if (playableTracks.length < quizRoundCount) {
-            setQuizStatus("This artist doesn't have enough songs in their catalog. Try another artist.");
+        if (playableTracks.length < currentQuizRoundCount) {
+            setQuizStatus(`This artist only has ${playableTracks.length} usable songs. Pick fewer rounds or try another artist.`);
             quizTitle.textContent = "Choose another artist";
             return;
         }
 
-        quizRounds = shuffle(playableTracks).slice(0, quizRoundCount).map((track) => ({
+        quizRounds = shuffle(playableTracks).slice(0, currentQuizRoundCount).map((track) => ({
             track,
             answers: buildAnswers(track)
         }));
@@ -433,7 +452,7 @@ async function renderRound() {
     answerGrid.innerHTML = "";
     setQuizStatus("");
 
-    roundLabel.textContent = `Round ${currentRoundIndex + 1} of ${quizRoundCount}`;
+    roundLabel.textContent = `Round ${currentRoundIndex + 1} of ${quizRounds.length}`;
     quizTitle.textContent = selectedArtist ? `Which ${selectedArtist.name} song is this?` : "Guess the song";
     audioPanel.hidden = false;
     playPauseBtn.textContent = "Pause";
@@ -490,11 +509,11 @@ function answerRound(selectedButton, selectedAnswer) {
 
     if (spotifyPlayer) spotifyPlayer.pause();
 
-    if (currentRoundIndex < quizRoundCount - 1) {
+    if (currentRoundIndex < quizRounds.length - 1) {
         nextRoundButton.hidden = false;
     } else {
         quizTitle.textContent = "Quiz complete";
-        setQuizStatus(`Final score: ${score} of ${quizRoundCount}.`);
+        setQuizStatus(`Final score: ${score} of ${quizRounds.length}.`);
     }
 }
 
@@ -514,6 +533,7 @@ function restartQuiz() {
 function initialize() {
     redirectUriInput.value = getRedirectUri();
     clientIdInput.value = localStorage.getItem(clientIdStorageKey) || "";
+    normalizeRoundCountInput();
     loadStoredToken();
     handleSpotifyRedirect();
 }
@@ -544,5 +564,6 @@ volumeControl.addEventListener("input", () => {
 });
 nextRoundButton.addEventListener("click", nextRound);
 restartQuizButton.addEventListener("click", restartQuiz);
+roundCountInput.addEventListener("change", normalizeRoundCountInput);
 
 initialize();

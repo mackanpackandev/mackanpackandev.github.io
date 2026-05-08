@@ -304,7 +304,7 @@ code {
 }
 
 .artist-search {
-    grid-template-columns: minmax(0, 1fr) 100px auto;
+    grid-template-columns: minmax(0, 1fr) 100px 110px auto;
 }
 
 .spotify-form label,
